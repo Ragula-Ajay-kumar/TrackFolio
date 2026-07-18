@@ -1,42 +1,62 @@
 # TrackFolio
 
-A full-stack job application tracker with authentication and an analytics dashboard — built to manage internship/placement applications during campus recruitment season.
+TrackFolio is a full-stack job application tracker that helps students organize internship and placement applications. Users can securely manage applications, monitor progress, and view analytics through an interactive dashboard.
 
-**Live demo:** [track-folio.vercel.app](https://track-folio.vercel.app)
-**API docs:** [trackfolio-api-4hp1.onrender.com/docs](https://trackfolio-api-4hp1.onrender.com/docs)
+🌐 **Live Demo:** https://track-folio.vercel.app  
+📖 **API Docs:** https://trackfolio-api-4hp1.onrender.com/docs
 
-> Note: the backend runs on Render's free tier, which spins down after periods of inactivity. The first request after idle time may take 30–50 seconds to wake up — subsequent requests are fast.
+> **Note:** The backend is hosted on Render's free tier, so the first request after inactivity may take 30–50 seconds to wake up.
+
+---
 
 ## Features
 
-- Email/password authentication with JWT
-- Create, edit, and delete job applications (company, role, status, dates, notes)
-- Dashboard with total/by-status counts and a status bar chart
-- "Due soon" follow-up reminders for the next 7 days
-- Per-user data isolation — each user only sees their own applications
+- Secure JWT-based authentication
+- Add, edit, and delete job applications
+- Track application status (Applied, OA, Interview, Offer, Rejected)
+- Dashboard with application statistics and charts
+- Follow-up reminders for the next 7 days
+- Per-user data isolation
+- Persistent PostgreSQL database storage
 
-## Tech stack
+---
 
-| Layer    | Tech |
-|----------|------|
-| Frontend | React (Vite), React Router, Tailwind CSS, Recharts, Axios |
-| Backend  | FastAPI, SQLAlchemy, Pydantic, python-jose (JWT), Passlib (bcrypt) |
-| Database | PostgreSQL (Supabase), SQLite for local dev — zero setup needed |
-| Deploy   | Vercel (frontend) + Render (backend) |
+## Tech Stack
+
+| Layer | Technologies |
+|--------|--------------|
+| Frontend | React (Vite), Tailwind CSS, React Router, Axios, Recharts |
+| Backend | FastAPI, SQLAlchemy, Pydantic, python-jose (JWT), Passlib |
+| Database | PostgreSQL (Supabase), SQLite (Local Development) |
+| Deployment | Vercel (Frontend), Render (Backend) |
+
+---
 
 ## Architecture
 
 ```
-frontend (React/Vite)  --->  backend (FastAPI)  --->  PostgreSQL
-     Vercel                      Render                  Supabase
+React (Vite)
+      │
+ REST API (JWT)
+      │
+ FastAPI Backend
+      │
+ PostgreSQL
 ```
 
-The frontend calls the backend over REST, authenticating with a JWT stored in
-localStorage and sent as a Bearer token on every request. The backend is
-stateless — all session data lives in the signed token, so it scales
-horizontally without shared session storage.
+---
 
-## Running locally
+## How It Works
+
+1. Users sign up or log in securely.
+2. The frontend sends authenticated API requests using JWT.
+3. FastAPI validates requests and performs CRUD operations.
+4. Application data is stored in PostgreSQL.
+5. The dashboard displays application statistics and upcoming follow-ups.
+
+---
+
+## Running Locally
 
 ### Backend
 
@@ -45,57 +65,49 @@ cd backend
 python -m venv venv
 source venv/bin/activate    # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env        # defaults work as-is for local dev (SQLite)
+cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
-Backend runs at `http://localhost:8000`. Interactive API docs at `http://localhost:8000/docs`.
+Backend: `http://localhost:8000`
 
 ### Frontend
 
 ```bash
 cd frontend
 npm install
-cp .env.example .env        # defaults to http://localhost:8000
+cp .env.example .env
 npm run dev
 ```
 
-Frontend runs at `http://localhost:5173`.
+Frontend: `http://localhost:5173`
 
-## Deployment
+---
 
-### Backend → Render
+## API Overview
 
-1. Create a Postgres database (e.g. on [Supabase](https://supabase.com)) and copy its connection string.
-2. On Render: **New → Web Service**, connect this repo, set root directory to `backend`.
-3. Build command: `pip install -r requirements.txt`
-   Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-4. Add environment variables: `DATABASE_URL` (from step 1) and `JWT_SECRET` (any long random string).
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Register |
+| POST | `/auth/login` | Login |
+| GET | `/auth/me` | Current User |
+| GET | `/applications` | List Applications |
+| POST | `/applications` | Create Application |
+| PUT | `/applications/{id}` | Update Application |
+| DELETE | `/applications/{id}` | Delete Application |
+| GET | `/dashboard` | Dashboard Analytics |
 
-### Frontend → Vercel
+---
 
-1. Import this repo on Vercel, set the root directory to `frontend`.
-2. Add environment variable `VITE_API_URL` = your deployed Render backend URL.
-3. Deploy — Vercel auto-detects the Vite build.
+## Future Improvements
 
-## API overview
-
-| Method | Endpoint             | Description                        |
-|--------|-----------------------|-------------------------------------|
-| POST   | `/auth/register`      | Create an account                   |
-| POST   | `/auth/login`         | Log in, get a JWT                   |
-| GET    | `/auth/me`             | Current user info                   |
-| GET    | `/applications`        | List your applications              |
-| POST   | `/applications`        | Create an application               |
-| PUT    | `/applications/{id}`   | Update an application               |
-| DELETE | `/applications/{id}`   | Delete an application               |
-| GET    | `/dashboard`            | Stats: totals, by-status, due-soon  |
-
-Full interactive docs are auto-generated by FastAPI at `/docs`.
-
-## What I'd improve next
-
-- Email reminders for upcoming follow-ups (currently shown in-app only)
-- Kanban-style drag-and-drop board view for statuses
+- Email reminders
+- Kanban board
 - CSV import/export
-- Refresh tokens (current JWT is long-lived for simplicity)
+- Refresh token authentication
+
+---
+
+## Author
+
+**Ragula-Ajay-Kumar**
