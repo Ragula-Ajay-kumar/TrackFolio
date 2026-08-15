@@ -17,7 +17,7 @@ TrackFolio is a full-stack job application tracker that helps students organize 
 - Dashboard with application statistics and charts
 - Follow-up reminders for the next 7 days
 - Per-user data isolation
-- Persistent PostgreSQL database storage
+- Persistent PostgreSQL database 
 
 ---
 
